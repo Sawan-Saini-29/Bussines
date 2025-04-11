@@ -24,7 +24,6 @@ function ListBusiness() {
                 const existingList = await AsyncStorage.getItem("BusinessList");
                 if (existingList !== null) {
                     const businessArray = JSON.parse(existingList);
-                    console.log("Existing business list:", businessArray);
                     setlistBusiness(businessArray)
                 } else {
                     Alert.alert("No businesses List found yet.");
@@ -45,14 +44,15 @@ function ListBusiness() {
         Clipboard.setString(id);
     };
 
-    const checkArticale = () => {
+    const checkArticale = async (id : string) => {
+        await AsyncStorage.setItem("CurrentBusniessId", id);
         navigation.navigate("ArticaleList");
     };
 
     const flatListRenderItem = (item: any) => {
         return (
             <View style={{ marginTop: 10 }}>
-                <TouchableOpacity onPress={checkArticale} style={styles.buttonContainer}>
+                <TouchableOpacity onPress={() => checkArticale(item.id)} style={styles.buttonContainer}>
                     <Text style={styles.buttonTextList}> Name :- {item.name}</Text>
                     <Text style={styles.buttonTextList}>Busniess ID :- {item.id}</Text>
                     <View style={{flexDirection : 'row',justifyContent :'center', alignItems : "center"}}>

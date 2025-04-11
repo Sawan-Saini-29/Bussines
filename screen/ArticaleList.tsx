@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     StyleSheet,
     TouchableOpacity,
@@ -6,13 +6,42 @@ import {
     Text,
     Image,
     FlatList,
-    View
+    View,
+    Alert
 } from 'react-native';
 import { images } from './assets';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ArticaleList() {
     const navigation: any = useNavigation();
+        const [listArticale, setlistArticale] = useState([]);
+    
+    useEffect(() => {
+        const fetchBusinessList = async () => {
+            try {
+                const existingList = await AsyncStorage.getItem("ArticleList");
+                const currentTargetId = await AsyncStorage.getItem("CurrentBusniessId");
+                if (existingList !== null && currentTargetId !== null) {
+                    const businessArray = JSON.parse(existingList);
+                    const targetId = currentTargetId;
+                    let articlesForBusiness = [];
+                    if (businessArray.hasOwnProperty(targetId)) {
+                        articlesForBusiness = businessArray[targetId];
+                    } else {
+                        Alert.alert("No articles found for this business ID.");
+                    }
+                    setlistArticale(articlesForBusiness)
+                } else {
+                    Alert.alert("No Article List found yet.");
+                }
+            } catch (error) {
+                console.error("Failed to fetch business list:", error);
+            }
+        };
+
+        fetchBusinessList();
+    }, []);
 
     const goBack = () => {
         navigation.goBack()
@@ -22,7 +51,6 @@ function ArticaleList() {
         return (
             <View style={{ marginTop: 10 }}>
                 <TouchableOpacity disabled={true} style={styles.buttonContainer}>
-                <Text style={[styles.buttonTextList, {textAlign : "center"}]}>Artical Number :- {index+1}</Text>
                     <Text style={styles.buttonTextList}>Artical Name :- {item.name}</Text>
                     <Text style={styles.buttonTextList}>Artical Quntity :- {item.qty}</Text>
                     <Text style={styles.buttonTextList}>Per Artical Price :- {item.selling_price} RS</Text>
@@ -32,49 +60,10 @@ function ArticaleList() {
     }
 
     const listRenderArtical = () => {
-        const listBusiness = [
-            {
-                id: "1",
-                name: "Shirt",
-                qty: 10,
-                selling_price: 100,
-            },
-            {
-                id: "2",
-                name: "bat",
-                qty: 100,
-                selling_price: 10000,
-            },
-            {
-                id: "3",
-                name: "cycle",
-                qty: 5,
-                selling_price: 10,
-            },
-            {
-                id: "4",
-                name: "bike",
-                qty: 5,
-                selling_price: 10,
-            },
-            {
-                id: "5",
-                name: "roller",
-                qty: 5,
-                selling_price: 10,
-            },
-            {
-                id: "6",
-                name: "pen",
-                qty: 5,
-                selling_price: 10,
-            },
-        ]
-
         return (
             <View style={{ flex: 1, marginTop: 30 }}>
                 <FlatList
-                    data={listBusiness}
+                    data={listArticale}
                     renderItem={({ item , index}) => flatListRenderArtical(item,index)}
                     showsVerticalScrollIndicator={false}
                 ></FlatList>

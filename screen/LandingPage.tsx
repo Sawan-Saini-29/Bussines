@@ -6,15 +6,37 @@ import {
     Text
 } from 'react-native';
 import { images } from './assets';
+import { useNavigation } from '@react-navigation/native';
+
 
 function LandingPage() {
+    const navigation: any = useNavigation();
+
+    const createBusiness = () => {
+        navigation.navigate("CreateBusiness");
+    };
+
+    const createArticle = () => {
+        navigation.navigate("CreateArticle");
+    };
+
+
+    const listBusiness = () => {
+        navigation.navigate("ListBusiness");
+    };
+
     return (
         <ImageBackground source={images.building} style={styles.sectionContainer}>
-            <TouchableOpacity style={styles.buttonContainer}>
-                <Text style={styles.buttonText}>Create </Text>
+            <TouchableOpacity onPress={createBusiness} style={styles.buttonContainer}>
+                <Text style={styles.buttonText}>Create Business</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonContainer}>
-                <Text style={styles.buttonText} >See List</Text>
+
+            <TouchableOpacity onPress={createArticle} style={styles.buttonContainer}>
+                <Text style={styles.buttonText}>Create Article</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={listBusiness} style={styles.buttonContainer}>
+                <Text style={styles.buttonText} >See Business List</Text>
             </TouchableOpacity>
         </ImageBackground>
     );

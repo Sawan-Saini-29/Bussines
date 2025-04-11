@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     StyleSheet,
     TouchableOpacity,
@@ -6,16 +6,43 @@ import {
     Text,
     Image,
     FlatList,
-    View
+    View,
+    Alert
 } from 'react-native';
 import { images } from './assets';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 function ListBusiness() {
     const navigation: any = useNavigation();
+    const [listBusiness, setlistBusiness] = useState([]);
+
+    useEffect(() => {
+        const fetchBusinessList = async () => {
+            try {
+                const existingList = await AsyncStorage.getItem("BusinessList");
+                if (existingList !== null) {
+                    const businessArray = JSON.parse(existingList);
+                    console.log("Existing business list:", businessArray);
+                    setlistBusiness(businessArray)
+                } else {
+                    Alert.alert("No businesses List found yet.");
+                }
+            } catch (error) {
+                console.error("Failed to fetch business list:", error);
+            }
+        };
+
+        fetchBusinessList();
+    }, []);
 
     const goBack = () => {
         navigation.goBack();
+    };
+
+    const copyString = (id: string) => {
+        Clipboard.setString(id);
     };
 
     const checkArticale = () => {
@@ -26,42 +53,20 @@ function ListBusiness() {
         return (
             <View style={{ marginTop: 10 }}>
                 <TouchableOpacity onPress={checkArticale} style={styles.buttonContainer}>
-                    <Text style={styles.buttonTextList}>{item.businessName}</Text>
+                    <Text style={styles.buttonTextList}> Name :- {item.name}</Text>
+                    <Text style={styles.buttonTextList}>Busniess ID :- {item.id}</Text>
+                    <View style={{flexDirection : 'row',justifyContent :'center', alignItems : "center"}}>
+                    <Text style={styles.buttonTextList}>Copy ID </Text>
+                    <TouchableOpacity style={{ marginTop: 5, width: 40,marginLeft : 10 }} onPress={() => copyString(item.id)}>
+                        <Image style={{ height: 30, width: 30, tintColor: "white" }} source={images.copy}></Image>
+                    </TouchableOpacity>
+                    </View>
                 </TouchableOpacity>
             </View>
         )
     }
 
     const listRender = () => {
-        const listBusiness = [
-            {
-                businessId: 1,
-                businessName: "Amazon"
-            },
-
-            {
-                businessId: 2,
-                businessName: "TATA"
-            },
-
-            {
-                businessId: 3,
-                businessName: "Birla"
-            },
-            {
-                businessId: 4,
-                businessName: "NRK"
-            },
-            {
-                businessId: 5,
-                businessName: "JIO"
-            },
-            {
-                businessId: 6,
-                businessName: "FlipKart"
-            },
-        ]
-
         return (
             <View style={{ flex: 1, marginTop: 30 }}>
                 <FlatList
@@ -91,7 +96,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15
     },
     buttonContainer: {
-        height: 70,
+        padding : 10,
         borderRadius: 30,
         backgroundColor: "blue",
         justifyContent: "center",

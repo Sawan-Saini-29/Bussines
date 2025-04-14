@@ -12,6 +12,7 @@ import {
 import { images } from './assets';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {initDatabase} from "../dataBase/DataBase" 
 
 
 function CreateBusiness() {
@@ -35,6 +36,17 @@ function CreateBusiness() {
                 businessArray = JSON.parse(existingList);
             }
             businessArray.push(BusniessCreate);
+            try {
+            const db = await initDatabase();
+
+            await db.businesses.insert({
+                id: uniqueID,
+                name: 'My Store',
+              });
+            }
+            catch {(error:any)=>{
+                console.log("@@@ =========> error ",JSON.stringify(error))
+            }}
             await AsyncStorage.setItem("BusinessList", JSON.stringify(businessArray));
             Alert.alert(
                 `Busniess Created \nBusniess ID :- ${uniqueID}`,        // Alert title

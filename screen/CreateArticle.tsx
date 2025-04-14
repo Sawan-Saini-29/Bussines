@@ -12,6 +12,7 @@ import {
 import { images } from './assets';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { initDatabase } from '../dataBase/DataBase';
 
 function CreateArticle() {
     const navigation: any = useNavigation();
@@ -66,6 +67,14 @@ function CreateArticle() {
         }
 
         fullArticleData[busniessId].push(articalCreate);
+        const db = await initDatabase();
+        await db.articles.insert({
+            id: uniqueID,
+            name: 'Sunglasses',
+            qty: 20,
+            selling_price: 1500,
+            business_id: busniessId,
+        });
 
         await AsyncStorage.setItem("ArticleList", JSON.stringify(fullArticleData));
 

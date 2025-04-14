@@ -13,9 +13,11 @@ if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
 end
-
+use_frameworks!
 target 'Business' do
   config = use_native_modules!
+  pod 'Capacitor', :modular_headers => true
+  pod 'CapacitorCommunitySqlite', :path => '../node_modules/@capacitor-community/sqlite', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],

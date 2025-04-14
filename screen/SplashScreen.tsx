@@ -12,7 +12,7 @@ function SplashScreen() {
 
   useEffect(() => {
     setTimeout(() => {
-      navigation.navigate("LandingPage")
+      navigation.replace("LandingPage")
     }, 3000);
   }, [])
 
